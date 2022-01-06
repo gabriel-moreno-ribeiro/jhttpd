@@ -1,0 +1,19 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v2
+        with:
+          distribution: temurin
+          java-version: "17"
+      - run: bash build.sh
+      - run: java -cp out jhttpd.ServerTest
+      - run: |
+          java -cp out jhttpd.Main 8123 www &
+          sleep 1
+          curl -sf http://localhost:8123/ | grep -q "jhttpd is running"
+          curl -sf "http://localhost:8123/api/hello?name=ci" | grep -q '"ci"'
+          curl -sfI http://localhost:8123/files/readme.txt | grep -qi "text/plain"

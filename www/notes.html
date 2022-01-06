@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>notes</title>
+<style>body{font-family:system-ui,sans-serif;max-width:480px;margin:3rem auto}input,button{font-size:1rem;padding:.3rem}</style>
+</head>
+<body>
+<h1>notes</h1>
+<p><input id="id" placeholder="id" size="8"> <input id="text" placeholder="text"> <button id="save">save</button> <button id="load">load</button> <button id="del">delete</button></p>
+<pre id="out"></pre>
+<script>
+const out = document.getElementById('out');
+const call = async (method, body) => {
+  const id = document.getElementById('id').value || 'default';
+  const r = await fetch('/api/notes/' + encodeURIComponent(id), { method, body });
+  out.textContent = method + ' -> ' + r.status + ' ' + (await r.text());
+};
+document.getElementById('save').onclick = () => call('PUT', document.getElementById('text').value);
+document.getElementById('load').onclick = () => call('GET');
+document.getElementById('del').onclick = () => call('DELETE');
+</script>
+</body>
+</html>
